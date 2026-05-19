@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Faso tôtô</string>
+    <string name="home_label">Accueil</string>
+    <string name="favorites_label">Favoris</string>
+    <string name="profile_label">Profil</string>
+    <string name="cart_label">Panier</string>
+</resources>
