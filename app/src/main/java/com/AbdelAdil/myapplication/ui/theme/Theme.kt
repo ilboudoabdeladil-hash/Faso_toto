@@ -12,13 +12,13 @@ private val DarkColorScheme = darkColorScheme(
     primary = RedMarket,
     secondary = YellowMarket,
     tertiary = GreenMarket,
-    background = Black,
-    surface = Black,
-    onPrimary = White,
-    onSecondary = Black,
-    onTertiary = White,
-    onBackground = White,
-    onSurface = White
+    background = Color(0xFF212121),
+    surface = Color(0xFF212121),
+    onPrimary = Color.White,
+    onSecondary = Color(0xFF212121),
+    onTertiary = Color.White,
+    onBackground = Color.White,
+    onSurface = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -26,12 +26,12 @@ private val LightColorScheme = lightColorScheme(
     secondary = YellowMarket,
     tertiary = GreenMarket,
     background = GreyLight,
-    surface = White,
-    onPrimary = White,
-    onSecondary = Black,
-    onTertiary = White,
-    onBackground = Black,
-    onSurface = Black
+    surface = Color.White,
+    onPrimary = Color.White,
+    onSecondary = Color(0xFF212121),
+    onTertiary = Color.White,
+    onBackground = Color(0xFF212121),
+    onSurface = Color(0xFF212121)
 )
 
 @Composable

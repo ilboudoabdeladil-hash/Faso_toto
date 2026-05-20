@@ -1,11 +1,11 @@
 package com.AbdelAdil.myapplication.ui.auth
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.AbdelAdil.myapplication.data.api.RetrofitClient
-import com.AbdelAdil.myapplication.data.models.LoginRequest
-import com.AbdelAdil.myapplication.data.models.RegisterRequest
+import com.AbdelAdil.myapplication.data.local.TokenManager
 import com.AbdelAdil.myapplication.data.models.User
+import com.AbdelAdil.myapplication.data.repositories.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,42 +18,40 @@ data class AuthUiState(
     val isSuccess: Boolean = false
 )
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = AuthRepository(TokenManager(application))
+
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     fun login(email: String, motDePasse: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState(isLoading = true)
-            try {
-                val response = RetrofitClient.instance.login(LoginRequest(email, motDePasse))
-                if (response.success && response.data != null) {
-                    _uiState.value = AuthUiState(user = response.data.user, isSuccess = true)
-                } else {
-                    _uiState.value = AuthUiState(error = response.message ?: "Erreur de connexion")
+            repository.login(email, motDePasse).fold(
+                onSuccess = { user ->
+                    _uiState.value = AuthUiState(user = user, isSuccess = true)
+                },
+                onFailure = { e ->
+                    _uiState.value = AuthUiState(error = e.message ?: "Erreur de connexion")
                 }
-            } catch (e: Exception) {
-                _uiState.value = AuthUiState(error = "Impossible de contacter le serveur: ${e.message}")
-            }
+            )
         }
     }
 
     fun register(nom: String, email: String, motDePasse: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState(isLoading = true)
-            try {
-                val response = RetrofitClient.instance.register(RegisterRequest(nom, email, motDePasse))
-                if (response.success && response.data != null) {
-                    _uiState.value = AuthUiState(user = response.data.user, isSuccess = true)
-                } else {
-                    _uiState.value = AuthUiState(error = response.message ?: "Erreur d'inscription")
+            repository.register(nom, email, motDePasse).fold(
+                onSuccess = { user ->
+                    _uiState.value = AuthUiState(user = user, isSuccess = true)
+                },
+                onFailure = { e ->
+                    _uiState.value = AuthUiState(error = e.message ?: "Erreur d'inscription")
                 }
-            } catch (e: Exception) {
-                _uiState.value = AuthUiState(error = "Erreur réseau: ${e.message}")
-            }
+            )
         }
     }
-    
+
     fun resetState() {
         _uiState.value = AuthUiState()
     }

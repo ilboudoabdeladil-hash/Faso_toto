@@ -20,8 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.AbdelAdil.myapplication.data.local.CartManager
-import com.AbdelAdil.myapplication.data.models.Product
 import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +37,8 @@ fun ProductDetailScreen(
         viewModel.loadProduct(productId)
     }
 
+    val currentProduct = uiState.product
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,7 +51,7 @@ fun ProductDetailScreen(
             )
         },
         bottomBar = {
-            uiState.product?.let { product ->
+            currentProduct?.let { product ->
                 BottomAppBar(
                     containerColor = Color.White,
                     tonalElevation = 8.dp
@@ -70,8 +70,8 @@ fun ProductDetailScreen(
                             color = MaterialTheme.colorScheme.tertiary
                         )
                         Button(
-                            onClick = { 
-                                viewModel.addToCart()
+                            onClick = {
+                                viewModel.addToCart(product)
                                 Toast.makeText(context, "Produit ajouté au panier !", Toast.LENGTH_SHORT).show()
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -90,8 +90,7 @@ fun ProductDetailScreen(
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-        } else if (uiState.product != null) {
-            val product = uiState.product!!
+        } else if (currentProduct != null) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -99,8 +98,8 @@ fun ProductDetailScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 AsyncImage(
-                    model = product.images?.firstOrNull(),
-                    contentDescription = product.nom,
+                    model = currentProduct.images?.firstOrNull(),
+                    contentDescription = currentProduct.nom,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(300.dp)
@@ -110,19 +109,19 @@ fun ProductDetailScreen(
 
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = product.nom,
+                        text = currentProduct.nom,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    
+
                     Spacer(Modifier.height(8.dp))
-                    
+
                     Surface(
                         color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "En stock: ${product.stock}",
+                            text = "En stock: ${currentProduct.stock}",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.primary
@@ -137,12 +136,12 @@ fun ProductDetailScreen(
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = product.description,
+                        text = currentProduct.description,
                         fontSize = 16.sp,
                         color = Color.Gray,
                         modifier = Modifier.padding(top = 4.dp)
                     )
-                    
+
                     Spacer(Modifier.height(32.dp))
                 }
             }

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.AbdelAdil.myapplication.data.models.Category
 import com.AbdelAdil.myapplication.data.models.Product
+import com.AbdelAdil.myapplication.data.repositories.CategoryRepository
+import com.AbdelAdil.myapplication.data.repositories.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +19,9 @@ data class HomeUiState(
 )
 
 class HomeViewModel : ViewModel() {
+    private val productRepository = ProductRepository()
+    private val categoryRepository = CategoryRepository()
+
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
@@ -27,27 +32,32 @@ class HomeViewModel : ViewModel() {
     private fun loadHomeData() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
-            // Simulation d'appel API avec des données fictives
-            try {
-                val mockCategories = listOf(
-                    Category(1, "Électronique", "electronique"),
-                    Category(2, "Mode", "mode"),
-                    Category(3, "Maison", "maison"),
-                    Category(4, "Beauté", "beaute")
-                )
-                val mockProducts = listOf(
-                    Product(1, "Smartphone Pro", "Super smartphone", 899.99, 10, emptyList(), "publié", 1, 1),
-                    Product(2, "Casque Bluetooth", "Réduction de bruit", 199.99, 5, emptyList(), "publié", 1, 1),
-                    Product(3, "Robe d'été", "Robe légère en coton", 49.99, 20, emptyList(), "publié", 2, 2)
-                )
-                _uiState.value = HomeUiState(
-                    categories = mockCategories,
-                    popularProducts = mockProducts,
-                    isLoading = false
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
-            }
+
+            categoryRepository.getAll().fold(
+                onSuccess = { categories ->
+                    _uiState.value = _uiState.value.copy(categories = categories)
+                },
+                onFailure = { e ->
+                    _uiState.value = _uiState.value.copy(error = e.message)
+                }
+            )
+
+            productRepository.getAll().fold(
+                onSuccess = { products ->
+                    _uiState.value = _uiState.value.copy(
+                        popularProducts = products.filter { it.statut == "actif" }.take(10)
+                    )
+                },
+                onFailure = { e ->
+                    _uiState.value = _uiState.value.copy(error = e.message)
+                }
+            )
+
+            _uiState.value = _uiState.value.copy(isLoading = false)
         }
+    }
+
+    fun refresh() {
+        loadHomeData()
     }
 }

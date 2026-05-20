@@ -24,6 +24,7 @@ import com.AbdelAdil.myapplication.ui.auth.RegisterScreen
 import com.AbdelAdil.myapplication.ui.cart.CartScreen
 import com.AbdelAdil.myapplication.ui.checkout.CheckoutScreen
 import com.AbdelAdil.myapplication.ui.home.HomeScreen
+import com.AbdelAdil.myapplication.ui.order.OrderTrackingScreen
 import com.AbdelAdil.myapplication.ui.product.ProductDetailScreen
 import com.AbdelAdil.myapplication.ui.profile.ProfileScreen
 import com.AbdelAdil.myapplication.ui.seller.SellerDashboardScreen
@@ -144,6 +145,13 @@ fun MainApp() {
             }
             composable(Screen.SellerDashboard.route) {
                 SellerDashboardScreen()
+            }
+            composable(Screen.OrderTracking.route) { backStackEntry ->
+                val orderId = backStackEntry.arguments?.getString("orderId")?.toIntOrNull() ?: 0
+                OrderTrackingScreen(
+                    orderId = orderId,
+                    onBackClick = { navController.popBackStack() }
+                )
             }
         }
     }

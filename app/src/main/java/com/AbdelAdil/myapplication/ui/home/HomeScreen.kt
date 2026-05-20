@@ -39,7 +39,6 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(),
     onProductClick: (Product) -> Unit = {}
 ) {
-// ... (reste du code)
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
