@@ -3,8 +3,17 @@ package com.AbdelAdil.myapplication.ui.splash
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.Image
-import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.AbdelAdil.myapplication.R
 import kotlinx.coroutines.delay
 
@@ -30,26 +39,6 @@ fun SplashScreen(onNextScreen: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_faso_toto),
-                contentDescription = "Logo Faso tôtô",
-                modifier = Modifier
-                    .size(200.dp)
-                    .scale(scale)
-            )
-
-    LaunchedEffect(Unit) {
-        delay(2500)
-        onNextScreen()
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White), // Fond blanc pour faire ressortir le logo rond
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

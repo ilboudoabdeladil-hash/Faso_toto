@@ -37,6 +37,6 @@ class ProductDetailViewModel : ViewModel() {
     }
 
     fun addToCart(product: Product) {
-        CartManager.addItem(product)
+        CartManager.addProduct(product)
     }
 }
